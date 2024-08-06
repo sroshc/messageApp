@@ -90,3 +90,7 @@ display: none;
 .text_content{
     font-size: 15px;
 }
+
+.user-notification{
+    color: rgba(140, 140, 140, 1);
+}

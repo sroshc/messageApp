@@ -29,6 +29,25 @@ class Message(db.Model):
     username = db.Column(db.String(20), nullable=False)
     timestamp = db.Column(db.DateTime, default = datetime.utcnow)
 
+class DirectMessage(db.Model):
+    id = db.Column(db.Integer, primary_key=True)
+    sender_id = db.Column(db.Integer, db.ForeignKey('user.id'), nullable=False)
+    receiver_id = db.Column(db.Integer, db.ForeignKey('user.id'), nullable=False)
+    content = db.Column(db.String(500), nullable=False)
+    timestamp = db.Column(db.DateTime, default=datetime.utcnow)
+
+    sender = db.relationship('User', foreign_keys=[sender_id])
+    receiver = db.relationship('User', foreign_keys=[receiver_id])
+
+    def __repr__(self):
+        return f'<DirectMessage {self.id} from {self.sender.username} to {self.receiver.username}>'
+
+class DirectMessageForm(FlaskForm):
+    content = StringField(validators=[
+                           InputRequired(), Length(min=1, max=500)], render_kw={"placeholder": "message..."})
+    
+    submit = SubmitField('Register')
+
 
 class User(db.Model, UserMixin):
     id = db.Column(db.Integer, primary_key=True)
@@ -130,6 +149,27 @@ def send_message():
 def get_messages():
     messages = Message.query.order_by(Message.timestamp.asc()).all()
     return jsonify([{'content': m.content, 'username': m.username, 'timestamp': m.timestamp.strftime('%H:%M')} for m in messages])
+
+
+@app.route('/direct-message', methods=['POST'])
+@login_required
+def direct_message():
+    recipient = request.form.get('username')
+    users = User.query.all()
+    users_extracted = [user.username for user in users]
+
+    if recipient not in users_extracted:
+        flash('that user does not exist')
+        return render_template("dashboard.html", username=current_user.username, incorrect_user = "true")
+    else:
+        return render_template('dm.html', recipient=recipient)
+
+@app.route('/get-users', methods=['GET'])
+def get_users():
+    users = User.query.all()
+    users_extracted = [user.username for user in users]
+
+    return jsonify(users_extracted)
 
 @app.route('/')
 def lander():

@@ -67,31 +67,49 @@ def send_message():
     return jsonify(success=True)
 
 @app.route('/messages')
+@login_required
 def get_messages():
     messages = Message.query.order_by(Message.timestamp.asc()).all()
+    return jsonify([{'content': m.content, 'username': m.username, 'timestamp': m.timestamp.strftime('%H:%M')} for m in messages])
+
+@app.route('/messages/<string:recipiant>')
+@login_required
+def get_direct_messages(recipiant):
+    session_messages = DirectMessage.query.filter(
+        or_(
+            and_(DirectMessage.sender == current_user.username, DirectMessage.receiver == recipiant),
+            and_(DirectMessage.sender == recipiant, DirectMessage.receiver == current_user.username)
+        )
+    ).order_by(DirectMessage.timestamp.asc()).all()
+
     return jsonify([{'content': m.content, 'username': m.username, 'timestamp': m.timestamp.strftime('%H:%M')} for m in messages])
 
 
 @app.route('/direct-message/<string:recipiant>', methods=['GET', 'POST'])
 @login_required
 def direct_message(recipiant):
-    user_exists = db.session.query(User.query.filter_by(username=recipiant).scalar() is not None)
-    if not user_exists:
-        return render_template("dashboard.html", username=current_user.username, incorrect_user = "true")
+    if request.method == "GET":
+        exists = db.session.query(User.username).filter_by(username=recipiant).first() is not None     
+        if not exists:
+            return render_template("dashboard.html", username=current_user.username, incorrect_user = "true"), 404
 
 
+        session_messages = DirectMessage.query.order_by(DirectMessage.timestamp.asc()).all()
 
-    session_messages = DirectMessage.query.filter(
-        or_(
-            and_(DirectMessage.sender == current_user.username, DirectMessage.receiver == recipiant),
-            and_(DirectMessage.sender == recipiant, DirectMessage.receiver == current_user.username)
-        )
-    ).order_by(DirectMessage.timestamp.desc()).all()
-
-
-
-    return render_template('dm.html', recipient=recipient, session_username=current_user.username, session_messages=session_messages)
-
+        return render_template('dm.html', recipiant=recipiant, session_username=current_user.username, session_messages=session_messages), 200
+    else:
+        content = request.form.get('content')
+        if content:
+            new_message = DirectMessage(content=content, sender=current_user.username, receiver=recipiant)
+            db.session.add(new_message)
+            db.session.commit()
+        return jsonify(success=True)
+    if request.method == "POST":
+        content = request.form.get('message-content')
+        message = DirectMessage(sender=current_user.username, receiver=recipiant, content=content)
+        db.session.add(message)
+        db.session.commit()
+        return redirect('/direct-message/' + recipiant)
 
 
 @app.route('/get-users', methods=['GET'])

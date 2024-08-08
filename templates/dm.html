@@ -8,22 +8,24 @@
 
 
 {% block body %}
-<h1 style="margin-bottom: 10px;">messaging "{{ recipient }}"</h1>
+<h1 style="margin-bottom: 10px;">messaging "{{ recipiant }}"</h1>
 
 <div id="messages" class="message-history-box">
     {% for message in session_messages %}
     <div>
         <strong>{{ message.timestamp.strftime('%Y-%m-%d %H:%M:%S') }}</strong>
-        <p>{{ message.username }}: </p>
-        <p>{{ message.content }}</p>
+        <p>{{ message.sender }}: </p>
+        <p>{{ message.receiver }}</p>
     </div>
     {% endfor %}
 </div>
 
 <form id="message-form" autocomplete="off">
-    <input type="text" id="message-content" name="content" placeholder="enter your message" required>
+    <input type="text" id="message-content" name="message-content" placeholder="enter your message" required>
     <button type="submit">Send</button>
 </form>
+
+
 
 {% endblock %}
 

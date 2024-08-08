@@ -72,18 +72,25 @@ def get_messages():
     return jsonify([{'content': m.content, 'username': m.username, 'timestamp': m.timestamp.strftime('%H:%M')} for m in messages])
 
 
-@app.route('/direct-message', methods=['POST', 'GET'])
+@app.route('/direct-message/<string:recipiant>', methods=['GET', 'POST'])
 @login_required
-def direct_message():
-    recipient = request.form.get('username')
-    users = User.query.all()
-    users_extracted = [user.username for user in users]
-
-    if recipient not in users_extracted:
-        flash('that user does not exist')
+def direct_message(recipiant):
+    user_exists = db.session.query(User.query.filter_by(username=recipiant).scalar() is not None)
+    if not user_exists:
         return render_template("dashboard.html", username=current_user.username, incorrect_user = "true")
-    else:
-        return render_template('dm.html', recipient=recipient, session_username=current_user.username)
+
+
+
+    session_messages = DirectMessage.query.filter(
+        or_(
+            and_(DirectMessage.sender == current_user.username, DirectMessage.receiver == recipiant),
+            and_(DirectMessage.sender == recipiant, DirectMessage.receiver == current_user.username)
+        )
+    ).order_by(DirectMessage.timestamp.desc()).all()
+
+
+
+    return render_template('dm.html', recipient=recipient, session_username=current_user.username, session_messages=session_messages)
 
 
 

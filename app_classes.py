@@ -16,16 +16,14 @@ class Message(db.Model):
 
 class DirectMessage(db.Model):
     id = db.Column(db.Integer, primary_key=True)
-    sender_id = db.Column(db.Integer, db.ForeignKey('user.id'), nullable=False)
-    receiver_id = db.Column(db.Integer, db.ForeignKey('user.id'), nullable=False)
+    sender = db.Column(db.String(20), nullable=False)
+    receiver = db.Column(db.String(20), nullable=False)
     content = db.Column(db.String(500), nullable=False)
     timestamp = db.Column(db.DateTime, default=datetime.utcnow)
 
-    sender = db.relationship('User', foreign_keys=[sender_id])
-    receiver = db.relationship('User', foreign_keys=[receiver_id])
 
-    def __repr__(self):
-        return f'<DirectMessage {self.id} from {self.sender.username} to {self.receiver.username}>'
+
+
 
 class DirectMessageForm(FlaskForm):
     content = StringField(validators=[

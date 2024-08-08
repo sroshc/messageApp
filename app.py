@@ -164,9 +164,7 @@ def direct_message():
     else:
         return render_template('dm.html', recipient=recipient, session_username=current_user.username)
 
-@app.route('/get-direct-messages', methods=['POST'])
-def get_direct_messages():
-    return "working on it"
+
 
 @app.route('/get-users', methods=['GET'])
 def get_users():

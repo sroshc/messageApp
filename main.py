@@ -72,7 +72,7 @@ def get_messages():
     return jsonify([{'content': m.content, 'username': m.username, 'timestamp': m.timestamp.strftime('%H:%M')} for m in messages])
 
 
-@app.route('/direct-message', methods=['POST'])
+@app.route('/direct-message', methods=['POST', 'GET'])
 @login_required
 def direct_message():
     recipient = request.form.get('username')
@@ -85,9 +85,7 @@ def direct_message():
     else:
         return render_template('dm.html', recipient=recipient, session_username=current_user.username)
 
-@app.route('/get-direct-messages', methods=['POST'])
-def get_direct_messages():
-    return "working on it"
+
 
 @app.route('/get-users', methods=['GET'])
 def get_users():

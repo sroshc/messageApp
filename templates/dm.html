@@ -12,15 +12,15 @@
 
 <div id="messages" class="message-history-box">
     {% for message in session_messages %}
-    <div>
-        <strong>{{ message.timestamp.strftime('%Y-%m-%d %H:%M:%S') }}</strong>
-        <p>{{ message.sender }}: </p>
-        <p>{{ message.receiver }}</p>
+    <div class="single-message-user">
+        <p class="time">{{ message.timestamp.strftime('%Y-%m-%d %H:%M:%S') }}</strong>
+        <p class="username">{{ message.sender }}: </p>
+        <p class="text_content">{{ message.content }}</p>
     </div>
     {% endfor %}
 </div>
 
-<form id="message-form" autocomplete="off">
+<form method = "post" id="message-form" autocomplete="off" action= "{{ url_for('send_direct_message', recipiant=recipiant) }}">
     <input type="text" id="message-content" name="message-content" placeholder="enter your message" required>
     <button type="submit">Send</button>
 </form>

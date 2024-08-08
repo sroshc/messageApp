@@ -85,7 +85,7 @@ def get_direct_messages(recipiant):
     return jsonify([{'content': m.content, 'username': m.username, 'timestamp': m.timestamp.strftime('%H:%M')} for m in messages])
 
 
-@app.route('/direct-message/<string:recipiant>', methods=['GET', 'POST'])
+@app.route('/direct-message/<string:recipiant>', methods=['GET'])
 @login_required
 def direct_message(recipiant):
     if request.method == "GET":
@@ -95,8 +95,9 @@ def direct_message(recipiant):
 
 
         session_messages = DirectMessage.query.order_by(DirectMessage.timestamp.asc()).all()
+        print(session_messages)
 
-        return render_template('dm.html', recipiant=recipiant, session_username=current_user.username, session_messages=session_messages), 200
+        return render_template('dm.html', recipiant=recipiant, session_messages=session_messages), 200
     else:
         content = request.form.get('content')
         if content:
@@ -107,9 +108,20 @@ def direct_message(recipiant):
     if request.method == "POST":
         content = request.form.get('message-content')
         message = DirectMessage(sender=current_user.username, receiver=recipiant, content=content)
+        print(message)
         db.session.add(message)
         db.session.commit()
-        return redirect('/direct-message/' + recipiant)
+        return json(success)
+
+@app.route('/send-direct-message',methods=['POST'])
+def send_direct_message(recipiant):
+    content = request.form.get('message-content')
+    message = DirectMessage(sender=current_user.username, receiver=recipiant, content=content)
+    print(message)
+    db.session.add(message)
+    db.session.commit()
+    session_messages = DirectMessage.query.order_by(DirectMessage.timestamp.asc()).all()
+    return render_template('dm.html', recipiant=recipiant, session_messages=session_messages), 200
 
 
 @app.route('/get-users', methods=['GET'])

@@ -20,11 +20,46 @@
     {% endfor %}
 </div>
 
-<form method = "post" id="message-form" autocomplete="off" action= "{{ url_for('send_direct_message', recipiant=recipiant) }}">
+<form id="message-form" autocomplete="off" >
     <input type="text" id="message-content" name="message-content" placeholder="enter your message" required>
     <button type="submit">Send</button>
 </form>
 
+<script>
+    $(document).ready(function() {
+
+    var sessionUsername = "{{ session_username }}";
+
+    $('#message-form').on('submit', function(e) {
+        e.preventDefault();
+        $.post('/direct-message/<string:recipiant>', { content: $('#message-content').val() }, function() {
+            $('#message-content').val('');
+            fetchMessages();
+        });
+    });
+
+    function fetchMessages() {
+        $.getJSON('/get-direct-messages/{{ recipiant }}', function(data) {
+            $('#messages').empty();
+            data.forEach(function(message) {
+                var messageClass = '';
+                if(sessionUsername === message.username){
+                    $('#messages').append(`<div class="single-message-user"><p class="time">${message.timestamp}</p><p class="username">${message.username} </p><p class="text_content">${message.content}</p></div>`);
+
+                } else{
+                    $('#messages').append(`<div class="single-message-other"><p class="time">${message.timestamp}</p><p class="username">${message.username} </p><p class="text_content">${message.content}</p></div>`);
+                }
+
+            });
+            $('#messages').scrollTop($('#messages')[0].scrollHeight);
+        });
+    }
+
+    setInterval(fetchMessages, 1000); 
+    fetchMessages(); 
+    });
+
+</script>
 
 
 {% endblock %}

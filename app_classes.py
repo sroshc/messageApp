@@ -22,9 +22,6 @@ class DirectMessage(db.Model):
     timestamp = db.Column(db.DateTime, default=datetime.utcnow)
 
 
-
-
-
 class DirectMessageForm(FlaskForm):
     content = StringField(validators=[
                            InputRequired(), Length(min=1, max=500)], render_kw={"placeholder": "message..."})

@@ -91,7 +91,6 @@ def direct_message(recipiant):
         content = request.form.get('content')
         if content:
             new_message = DirectMessage(content=content, sender=current_user.username, receiver=recipiant)
-            print(new_message.content)
             db.session.add(new_message)
             db.session.commit()
             return jsonify({'message': 'Success!'}), 200
@@ -101,15 +100,10 @@ def direct_message(recipiant):
 @app.route('/get-direct-messages/<recipiant>', methods=['GET'])
 @login_required
 def get_direct_messages(recipiant):
-    all_messages = DirectMessage.query.all();
-    for message in all_messages:
-        print(message.receiver + message.sender + message.content)
-
     session_messages = db.session.query(DirectMessage).filter(
     ((DirectMessage.sender == recipiant) & (DirectMessage.receiver == current_user.username)) |
     ((DirectMessage.sender == current_user.username) & (DirectMessage.receiver == recipiant))
     ).all()
-    print(session_messages)
     return jsonify([{'content': m.content, 'username': m.sender, 'timestamp': m.timestamp.strftime('%H:%M')} for m in session_messages])
     
 
@@ -117,7 +111,6 @@ def get_direct_messages(recipiant):
 def send_direct_message(recipiant):
     content = request.form.get('message-content')
     message = DirectMessage(sender=current_user.username, receiver=recipiant, content=content)
-    print(message)
     db.session.add(message)
     db.session.commit()
     session_messages = DirectMessage.query.order_by(DirectMessage.timestamp.asc()).all()

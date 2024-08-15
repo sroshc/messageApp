@@ -72,7 +72,7 @@ def get_messages():
     messages = Message.query.order_by(Message.timestamp.asc()).all()
     return jsonify([{'content': m.content, 'username': m.username, 'timestamp': m.timestamp.strftime('%H:%M')} for m in messages])
 
-@app.route('/direct-message/<string:recipiant>', methods=['GET', 'POST'])
+@app.route('/direct-message/<recipiant>', methods=['GET', 'POST'])
 @login_required
 def direct_message(recipiant):
     if request.method == "GET":
@@ -91,23 +91,29 @@ def direct_message(recipiant):
         content = request.form.get('content')
         if content:
             new_message = DirectMessage(content=content, sender=current_user.username, receiver=recipiant)
+            print(new_message.content)
             db.session.add(new_message)
             db.session.commit()
             return jsonify({'message': 'Success!'}), 200
         else:
             return jsonify ({'message': 'No message content'}), 400
 
-@app.route('/get-direct-messages/<string:recipiant>', methods=['GET'])
+@app.route('/get-direct-messages/<recipiant>', methods=['GET'])
 @login_required
 def get_direct_messages(recipiant):
+    all_messages = DirectMessage.query.all();
+    for message in all_messages:
+        print(message.receiver + message.sender + message.content)
+
     session_messages = db.session.query(DirectMessage).filter(
     ((DirectMessage.sender == recipiant) & (DirectMessage.receiver == current_user.username)) |
     ((DirectMessage.sender == current_user.username) & (DirectMessage.receiver == recipiant))
     ).all()
+    print(session_messages)
     return jsonify([{'content': m.content, 'username': m.sender, 'timestamp': m.timestamp.strftime('%H:%M')} for m in session_messages])
     
 
-@app.route('/send-direct-message/<string:recipiant>',methods=['POST'])
+@app.route('/send-direct-message/<recipiant>', methods=['POST'])
 def send_direct_message(recipiant):
     content = request.form.get('message-content')
     message = DirectMessage(sender=current_user.username, receiver=recipiant, content=content)

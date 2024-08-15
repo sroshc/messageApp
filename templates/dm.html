@@ -32,7 +32,7 @@
 
     $('#message-form').on('submit', function(e) {
         e.preventDefault();
-        $.post('/direct-message/<string:recipiant>', { content: $('#message-content').val() }, function() {
+        $.post('/direct-message/{{ recipiant }}', { content: $('#message-content').val() }, function() {
             $('#message-content').val('');
             fetchMessages();
         });

@@ -1,4 +1,4 @@
-from flask import Flask, render_template, request, redirect, url_for, flash, jsonify
+from flask import Flask, render_template, request, redirect, url_for, flash, jsonify, send_file
 from config import app, db, login_manager, bcrypt
 from flask_login import UserMixin, login_user, logout_user, login_required, current_user
 
@@ -7,6 +7,8 @@ from app_classes import *
 @login_manager.user_loader
 def load_user(user_id):
     return User.query.get(int(user_id))
+
+
 
 @app.route('/make-account', methods=['POST', 'GET'])
 def make_account():

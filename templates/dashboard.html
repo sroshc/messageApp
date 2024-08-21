@@ -2,10 +2,15 @@
 
 {% block head %}
 
+<style>
+.dm-request-group{
+    display: inline-block;
+}
+
+</style>
+
 
 {% endblock %}
-
-
 
 
 {% block body %}
@@ -20,14 +25,42 @@
         <a href="{{ url_for('logout') }}" style="margin-top: 15px;">logout?</a>
     </div>
     <h2 style="margin-top:20px">direct message?</h2>
-    <form action="/direct-message" method="POST">
-        <input type="username" id="username" name="username" required>
-        <input type="submit" value="dm">
-    </form>
+
+    <div class="dm-request-group">
+
+    <input class="js-dm" placeholder="enter username..." type="text" onkeydown="
+        if(event.key == 'Enter'){
+            handleDirectMessage();
+        }
+
+        ">
+    <button class="calculate-button"
+    onclick="
+    handleDirectMessage();
+    "
+    >dm</button> 
+    
+    </div>
+
     {% if incorrect_user=="true" %}
     <p class="user-notification">that user does not exist</p>
 
     {% endif %}
+
+<script>
+
+function handleDirectMessage(){
+    const dmRequested = document.querySelector('.js-dm').value;
+    const root = window.location.hostname;
+
+    console.log(root + /direct-message/ + dmRequested)
+
+    window.location.replace(/direct-message/ + dmRequested);
+    
+
+}
+
+</script>
 
 </div>
 {% endblock %}

@@ -1,0 +1,35 @@
+{% extends 'base.html'%}
+
+{% block head %}
+<style>
+    .username-box{
+        border-style: double;
+        width: 500px;
+        height: 800px;
+        overflow-y: scroll;    
+        margin-top: 10 px;
+    }
+    .friend_button{
+        width: 100%;
+        font: bolder;
+        font-family: Verdana, Geneva, Tahoma, sans-serif;
+        font-size: large;
+    </style>
+    
+
+{% endblock %}
+
+
+{% block body %}
+
+
+<h1>click on someone to friend them</h1>
+
+<div class="username-box">
+    {% for user in users %}
+    <button class="friend_button">{{user}}</p>
+    {% endfor %}
+
+</div>
+
+{% endblock %}

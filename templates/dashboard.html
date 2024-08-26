@@ -77,7 +77,13 @@
     </div>
 
 
-    <a href="{{ url_for('friend') }}" style="margin-top: 30px;">friend?</a>
+    <input class="js-user-lookup" plceholder="search for user..." type="text" onkeydown="
+    if(event.key =='Enter'){
+    search(document.querySelector('.js-user-lookup').value);
+    }
+    ">
+
+    <a href="{{ url_for('friend') }}" style="margin-top: 15px;">friend?</a>
 
 <script>
 const session_username = "{{ username }}"
@@ -100,7 +106,9 @@ function search(userInput) {
                         $('#user-box').append(`<button onclick="handleDirectMessage('${user}')" class="dm-button">${user}</button>`);
                     }
                 }else{
+                    if(user != session_username){
                     $('#user-box').append(`<button onclick="handleDirectMessage('${user}');" class="dm-button">${user}</button>`);
+                    }
                 }
               
             });

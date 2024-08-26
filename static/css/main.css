@@ -94,3 +94,13 @@ display: none;
 .user-notification{
     color: rgba(140, 140, 140, 1);
 }
+
+.send-message-text-box{
+    width: 565px;
+    height: 50px;
+}
+
+.send-message-button{
+    height: 56px;
+    width: 52px;
+}

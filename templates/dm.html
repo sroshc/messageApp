@@ -9,24 +9,25 @@
 
 
 {% block body %}
-<h1 style="margin-bottom: 10px;">messaging "{{ recipiant }}"</h1>
-
-<div id="messages" class="message-history-box">
-    {% for message in session_messages %}
-    <div class="single-message-user">
-        <p class="time">{{ message.timestamp.strftime('%Y-%m-%d %H:%M:%S') }}</strong>
-        <p class="username">{{ message.sender }}: </p>
-        <p class="text_content">{{ message.content }}</p>
+<div class="vertical-container">
+    <h1 style="margin-bottom: 10px;">messaging "{{ recipiant }}"</h1>
+    <div id="messages" class="message-history-box">
+        {% for message in session_messages %}
+        <div class="single-message-user">
+            <p class="time">{{ message.timestamp.strftime('%Y-%m-%d %H:%M:%S') }}</strong>
+            <p class="username">{{ message.sender }}: </p>
+            <p class="text_content">{{ message.content }}</p>
+        </div>
+        {% endfor %}
     </div>
-    {% endfor %}
+
+    <form id="message-form" autocomplete="off" >
+        <input class="send-message-text-box" type="text" id="message-content" name="message-content" placeholder="enter your message" required>
+        <button class="send-message-button" type="submit">Send</button>
+    </form>
+
+    <a href="{{ url_for('dashboard') }}" style="display: block;">dashboard?</a>
 </div>
-
-<form id="message-form" autocomplete="off" >
-    <input type="text" id="message-content" name="message-content" placeholder="enter your message" required>
-    <button type="submit">Send</button>
-</form>
-<a href="{{ url_for('dashboard') }}" style="display: block;">dashboard?</a>
-
 
 <script>
     $(document).ready(function() {

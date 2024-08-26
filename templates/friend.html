@@ -1,5 +1,7 @@
 {% extends 'base.html'%}
 
+
+
 {% block head %}
 <style>
     .username-box{
@@ -14,6 +16,7 @@
         font: bolder;
         font-family: Verdana, Geneva, Tahoma, sans-serif;
         font-size: large;
+    }
     </style>
     
 
@@ -25,11 +28,47 @@
 
 <h1>click on someone to friend them</h1>
 
-<div class="username-box">
+
+<div id="user-box" class="username-box">
     {% for user in users %}
-    <button class="friend_button">{{user}}</p>
+    {% if session_username != user%}
+    <button class="friend_button">{{ user }}</p>    
+    {% endif %}
+
     {% endfor %}
 
 </div>
+<input class = "js-search" type="text" id="message-content" name="message-content" placeholder="enter user" required>
+<button onclick="
+    const userSearched = document.querySelector('.js-search').value;
+    console.log(userSearched);
 
+    search(userSearched);
+
+
+"
+>search</button>
+
+
+<script src="https://code.jquery.com/jquery-3.6.0.min.js">
+    const session_username = "{{ session_username }}"
+    console.log(session_username)
+
+    function search(userInput) {
+            $.getJSON('/get-users', function(data) {
+                $('#user-box').empty();
+                data.forEach(function(user) {
+                    for(let i = 0; i < user.length; i++){
+                        if(user.charAt(i) == userInput.charAt(i)){
+                            $('#user-box').append(`<button class="friend_button href="friend/${user}"">${user}</p>`);
+   
+                        }
+                    }
+
+                });
+                $('#user-box').scrollTop($('#user-box')[0].scrollHeight);
+            });
+        }
+
+</script>
 {% endblock %}

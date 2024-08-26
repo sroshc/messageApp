@@ -10,3 +10,5 @@ Flask backend, uses polling and AJAX requests to refresh the message board in fr
 6/15/2024 - Dming feature is very broken fixed some of it 
 
 6/15/2024 - Dming is complete
+
+08/26/2024 - Getting started on friend feature

@@ -4,6 +4,7 @@
 
 <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
 
+
 {% endblock %}
 
 
@@ -24,6 +25,8 @@
     <input type="text" id="message-content" name="message-content" placeholder="enter your message" required>
     <button type="submit">Send</button>
 </form>
+<a href="{{ url_for('dashboard') }}" style="display: block;">dashboard?</a>
+
 
 <script>
     $(document).ready(function() {

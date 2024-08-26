@@ -126,6 +126,15 @@ def get_users():
 
     return jsonify(users_extracted)
 
+@app.route('/friend', methods=['GET'])
+@login_required
+def friend():
+    users = User.query.all()
+    users_exctracted = {user.username for user in users}
+
+    return render_template('friend.html', users=users_exctracted, session_username=current_user.username)
+
+
 @app.route('/')
 def lander():
     return render_template('lander.html')

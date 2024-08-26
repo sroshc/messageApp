@@ -2,11 +2,35 @@
 
 {% block head %}
 
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+
+
 <style>
 .dm-request-group{
     display: inline-block;
 }
+.username-box{
+    border-style: double;
+    width: 300px;
+    height: 400px;
+    overflow-y: scroll;    
+    margin-top: 10px;
 
+}
+.dm-button{
+    width: 100%;
+    border-radius: 5px;
+    font: bolder;
+    font-family: Verdana, Geneva, Tahoma, sans-serif;
+    font-size: large;
+}
+.dm-button:hover{
+    color: white;
+    background-color: grey;
+}
+.dm-button:active{
+    background-color: rgba(128, 128, 128, 0.8);
+}
 
 </style>
 
@@ -31,7 +55,7 @@
 
     <input class="js-dm" placeholder="enter username..." type="text" onkeydown="
         if(event.key == 'Enter'){
-            handleDirectMessage();
+            handleDirectMessage(document.querySelector('.js-dm').value);
         }
 
         ">
@@ -48,13 +72,45 @@
 
     {% endif %}
 
+    <div id="user-box" class="username-box">
+        
+    </div>
 
-    <a href="{{ url_for('friend') }}" style="margin-top: 15px;">friend?</a>
+
+    <a href="{{ url_for('friend') }}" style="margin-top: 30px;">friend?</a>
 
 <script>
+const session_username = "{{ username }}"
+console.log(session_username);
+search(undefined);
 
-function handleDirectMessage(){
-    const dmRequested = document.querySelector('.js-dm').value;
+function search(userInput) {
+        $.getJSON('/get-users', function(data) {
+            $('#user-box').empty();
+            data.forEach(function(user) {
+                if(userInput){
+                    let equal = true;
+                    for(let i = 0; i < userInput.length; i++){
+                        if(user.charAt(i) != userInput.charAt(i) || user == session_username){
+                            equal = false;
+                        }
+                    }
+                    if(equal){
+                        
+                        $('#user-box').append(`<button onclick="handleDirectMessage('${user}')" class="dm-button">${user}</button>`);
+                    }
+                }else{
+                    $('#user-box').append(`<button onclick="handleDirectMessage('${user}');" class="dm-button">${user}</button>`);
+                }
+              
+            });
+            $('#user-box').scrollTop($('#user-box')[0].scrollHeight);
+        });
+    }
+
+
+
+function handleDirectMessage(dmRequested){
     const root = window.location.hostname;
 
     console.log(root + /direct-message/ + dmRequested)

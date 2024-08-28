@@ -110,6 +110,7 @@ def get_direct_messages(recipiant):
     
 
 @app.route('/send-direct-message/<recipiant>', methods=['POST'])
+@login_required
 def send_direct_message(recipiant):
     content = request.form.get('message-content')
     message = DirectMessage(sender=current_user.username, receiver=recipiant, content=content)
@@ -120,6 +121,7 @@ def send_direct_message(recipiant):
 
 
 @app.route('/get-users', methods=['GET'])
+@login_required
 def get_users():
     users = User.query.all()
     users_extracted = [user.username for user in users]

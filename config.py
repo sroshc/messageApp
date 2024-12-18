@@ -11,6 +11,7 @@ db = SQLAlchemy(app)
 bcrypt = Bcrypt(app)
 app.config['SECRET_KEY'] = 'supersecretkey'
 
+db.create_all()
 
 login_manager = LoginManager()
 login_manager.init_app(app)

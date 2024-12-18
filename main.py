@@ -4,6 +4,8 @@ from flask_login import UserMixin, login_user, logout_user, login_required, curr
 
 from app_classes import *
 
+db.create_all()
+
 @login_manager.user_loader
 def load_user(user_id):
     return User.query.get(int(user_id))
